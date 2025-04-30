@@ -34,7 +34,7 @@ def load_dataset():
     return None
 
 # Please add funtion comment
-def train_model(df: pd.DataFrame, features, target):
+def train_model(df: pd.DataFrame, features: list, target: str):
     """ Trains model using a given dataset, features and the target variables.
     
     Args:
@@ -64,7 +64,7 @@ def train_model(df: pd.DataFrame, features, target):
     return None
 
 # Please add funtion comment
-def make_predictions(model, df, features):
+def make_predictions(model: RandomForestClassifier, df: pd.DataFrame, features: list):
     """Using the given model, uses the given data to give a target prediction.
     
     Args:
