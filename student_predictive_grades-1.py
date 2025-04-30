@@ -1,5 +1,6 @@
 import pandas as pd
 import tkinter as tk
+import sklearn as sk
 from tkinter import filedialog, messagebox
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -11,6 +12,14 @@ from sklearn.preprocessing import LabelEncoder
 
 # Please add funtion comment
 def load_dataset():
+    """ Selects and loads a chosen data file into a df.
+    
+    Returns:
+        df: df containing the chosen csv or excel file
+        
+    Raises:
+        Error if dataset fails to load
+    """
     file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("Excel files", "*.xlsx;*.xls")])
     if file_path:
         try:
@@ -25,7 +34,21 @@ def load_dataset():
     return None
 
 # Please add funtion comment
-def train_model(df, features, target):
+def train_model(df: pd.DataFrame, features, target):
+    """ Trains model using a given dataset, features and the tagret variables.
+    
+    Args:
+        df: df containing the data to train the model
+        features: Data titles which are to be used to create the prediction
+        target: The target variable in which the model has to predict
+        
+    Returns:
+        model: A model trained by the data to predict the target
+        
+    Raises:
+        Exception: Error if the model isn't sucessfully trained
+    
+    """
     try:
         X = df[features]
         y = df[target]
@@ -42,6 +65,20 @@ def train_model(df, features, target):
 
 # Please add funtion comment
 def make_predictions(model, df, features):
+    """Using the given model, uses the given data to give a target prediction.
+    
+    Args:
+        model: sklearn model that has already been trained
+        df: pandas df containing data to provide prediction on
+        features: data tiles to be used to create the prediction
+        
+    Returns:
+        Visual output of the prediction of the target variable for the data
+        
+    Raises:
+        Exception: Raises exception if prediction is failed to be made
+    
+    """
     try:
         X_new = df[features]
         predictions = model.predict(X_new)
