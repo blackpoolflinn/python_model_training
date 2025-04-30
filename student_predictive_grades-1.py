@@ -35,7 +35,7 @@ def load_dataset():
 
 # Please add funtion comment
 def train_model(df: pd.DataFrame, features, target):
-    """ Trains model using a given dataset, features and the tagret variables.
+    """ Trains model using a given dataset, features and the target variables.
     
     Args:
         df: df containing the data to train the model
