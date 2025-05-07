@@ -7,10 +7,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 
-#add funtion
+#add function
 
 
-# Please add funtion comment
+# Please add function comment
 def load_dataset():
     """ Selects and loads a chosen data file into a df.
     
@@ -87,36 +87,36 @@ def make_predictions(model: RandomForestClassifier, df: pd.DataFrame, features: 
     except Exception as e:
         messagebox.showerror("Error", f"Failed to make predictions: {e}")
 
-# Please add funtion comment
+# Please add function comment
 root = tk.Tk()
 root.title("Student Predictive Grades")
 
-# Please add funtion comment
+# Please add function comment
 load_button = tk.Button(root, text="Load Dataset", command=lambda: load_dataset())
 load_button.pack(pady=10)
 
-#Please add funtion comment
+#Please add function comment
 tk.Label(root, text="Features (comma-separated):").pack()
 features_entry = tk.Entry(root)
 features_entry.pack(pady=5)
 
-# Please add funtion comment
+# Please add function comment
 tk.Label(root, text="Target:").pack()
 target_entry = tk.Entry(root)
 target_entry.pack(pady=5)
 
-# Please add funtion comment
+# Please add function comment
 train_button = tk.Button(root, text="Train Model", command=lambda: train_model(df, features_entry.get().split(','), target_entry.get()))
 train_button.pack(pady=10)
 
-# Please add funtion comment
+# Please add function comment
 predict_button = tk.Button(root, text="Make Predictions", command=lambda: make_predictions(model, df, features_entry.get().split(',')))
 predict_button.pack(pady=10)
 
-# Please add funtion comment
+# Please add function comment
 result_text = tk.Text(root, height=20, width=80)
 result_text.pack(pady=10)
 
-# Please add funtion comment
+# Please add function comment
 root.mainloop()
 
