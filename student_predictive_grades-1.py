@@ -6,9 +6,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
+import subprocess
 
-#add function
-
+def global_variables():
+    """ Defines global variables for tkinter button use """
+    global df, model
+    df = None
+    model = None
 
 # Please add function comment
 def load_dataset():
@@ -63,7 +67,7 @@ def train_model(df: pd.DataFrame, features: list, target: str):
         messagebox.showerror("Error", f"Failed to train model: {e}")
     return None
 
-# Please add funtion comment
+# Please add function comment
 def make_predictions(model: RandomForestClassifier, df: pd.DataFrame, features: list):
     """Using the given model, uses the given data to give a target prediction.
     
