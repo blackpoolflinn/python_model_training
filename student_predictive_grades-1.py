@@ -3,7 +3,7 @@ import tkinter as tk
 import sklearn as sk
 from tkinter import filedialog, messagebox
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 import subprocess
@@ -18,7 +18,7 @@ class modelInstance:
     def set_df(self, df):
         self.df = df
 
-    def set_model(self, model: RandomForestClassifier):
+    def set_model(self, model: RandomForestRegressor):
         self.model = model
 
     # Please add function comment
@@ -42,7 +42,8 @@ class modelInstance:
                 self.set_df(df)
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load dataset: {e}")
-        self.set_df(None)
+        else:
+            self.set_df(None)
 
     # Please add funtion comment
     def train_model(self, features: list, target: str):
@@ -64,7 +65,7 @@ class modelInstance:
             X = self.df[features]
             y = self.df[target]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-            model = RandomForestClassifier()
+            model = RandomForestRegressor()
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             accuracy = accuracy_score(y_test, y_pred)
