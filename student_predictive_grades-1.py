@@ -45,6 +45,11 @@ class modelInstance:
         else:
             self.set_df(None)
 
+    def clean_dataset(self):
+        
+        if self.df is None:
+            messagebox.showerror("Error", "No dataset loaded.")
+
     # Please add funtion comment
     def train_model(self, features: list, target: str):
         """ Trains model using a given dataset, features and the target variables.
@@ -61,6 +66,11 @@ class modelInstance:
             Exception: Error if the model isn't sucessfully trained
         
         """
+
+        if self.df is None:
+            messagebox.showerror("Error", "No dataset loaded.")
+            return
+
         try:
             X = self.df[features]
             y = self.df[target]
@@ -91,6 +101,11 @@ class modelInstance:
             Exception: Raises exception if prediction is failed to be made
         
         """
+
+        if self.model is None:
+            messagebox.showerror("Error", "No model has been trained.")
+            return
+
         try:
             X_new = self.df[features]
             predictions = self.model.predict(X_new)
