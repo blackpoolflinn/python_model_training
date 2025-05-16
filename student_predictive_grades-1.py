@@ -15,8 +15,14 @@ class modelInstance:
         self.df = None
         self.model = None
 
+    def set_df(self, df):
+        self.df = df
+
+    def set_model(self, model: RandomForestClassifier):
+        self.model = model
+
     # Please add function comment
-    def load_dataset():
+    def load_dataset(self):
         """ Selects and loads a chosen data file into a df.
         
         Returns:
@@ -33,13 +39,13 @@ class modelInstance:
                 else:
                     df = pd.read_excel(file_path, engine='openpyxl')
                 messagebox.showinfo("Success", "Dataset loaded successfully *but did you check the script!")
-                return df
+                self.set_df(df)
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load dataset: {e}")
-        return None
+        self.set_df(None)
 
     # Please add funtion comment
-    def train_model(df: pd.DataFrame, features: list, target: str):
+    def train_model(self, features: list, target: str):
         """ Trains model using a given dataset, features and the target variables.
         
         Args:
@@ -55,21 +61,21 @@ class modelInstance:
         
         """
         try:
-            X = df[features]
-            y = df[target]
+            X = self.df[features]
+            y = self.df[target]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             model = RandomForestClassifier()
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             accuracy = accuracy_score(y_test, y_pred)
             messagebox.showinfo("Model Trained", f"Model trained successfully! Accuracy: {accuracy:.2f}")
-            return model
+            self.set_model(model)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to train model: {e}")
         return None
 
     # Please add function comment
-    def make_predictions(model: RandomForestClassifier, df: pd.DataFrame, features: list):
+    def make_predictions(self, features: list):
         """Using the given model, uses the given data to give a target prediction.
         
         Args:
@@ -85,13 +91,14 @@ class modelInstance:
         
         """
         try:
-            X_new = df[features]
-            predictions = model.predict(X_new)
+            X_new = self.df[features]
+            predictions = self.model.predict(X_new)
             result_text.delete(1.0, tk.END)
             result_text.insert(tk.END, f"Predictions:\n{predictions}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to make predictions: {e}")
 
+# Intialise model class
 model_instance = modelInstance()
 
 # Please add function comment
@@ -113,11 +120,11 @@ target_entry = tk.Entry(root)
 target_entry.pack(pady=5)
 
 # Please add function comment
-train_button = tk.Button(root, text="Train Model", command=lambda: model_instance.train_model(model_instance.df, features_entry.get().split(','), target_entry.get()))
+train_button = tk.Button(root, text="Train Model", command=lambda: model_instance.train_model(features_entry.get().split(','), target_entry.get()))
 train_button.pack(pady=10)
 
 # Please add function comment
-predict_button = tk.Button(root, text="Make Predictions", command=lambda: model_instance.make_predictions(model_instance.model, model_instance.df, features_entry.get().split(',')))
+predict_button = tk.Button(root, text="Make Predictions", command=lambda: model_instance.make_predictions(features_entry.get().split(',')))
 predict_button.pack(pady=10)
 
 # Please add function comment
