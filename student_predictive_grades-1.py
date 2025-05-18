@@ -5,7 +5,7 @@ import numpy as np
 from tkinter import filedialog, messagebox
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import r2_score
 from sklearn.preprocessing import LabelEncoder
 import subprocess
 
@@ -14,7 +14,8 @@ class modelInstance:
     def __init__(self):
         """Intialise Class Variables"""
         self.df = None
-        self.model = None
+        self.model = RandomForestRegressor()
+        self.label_encoder = LabelEncoder()
 
     def set_df(self, df):
         self.df = df
@@ -54,6 +55,9 @@ class modelInstance:
 
         self.remove_empty_rows()
         self.verify_numerical_categories()
+        self.encode_string_categories()
+
+        self.set_df(self.df.drop('student_id', axis=1))
         
 
     def remove_empty_rows(self) -> pd.DataFrame:
@@ -76,7 +80,7 @@ class modelInstance:
             # Convert numeric values to float
             df.loc[mask, column] = df.loc[mask, column].astype(float)
 
-            # Calculate the median of numeric values
+            # Calculate the median of the column
             median_value = df.loc[mask, column].median()
 
             # Replace non-numeric values with the median
@@ -84,7 +88,23 @@ class modelInstance:
             df[column] = df[column].astype(float)
 
         self.set_df(df)
+
+
+    def encode_string_categories(self):
+        df = self.df
+
+        categorical_cols = [
+            'gender', 'part_time_job', 'diet_quality',
+            'parental_education_level', 'internet_quality', 'extracurricular_participation'
+        ]
         
+        for col in categorical_cols:
+            df[col] = df[col].fillna(df[col].mode()[0])
+        
+        for col in categorical_cols:
+            df[col] = self.label_encoder.fit_transform(df[col])
+        
+        self.set_df(df)
 
     # Please add funtion comment
     def train_model(self, features: list, target: str):
@@ -111,11 +131,12 @@ class modelInstance:
             x = self.df[features]
             y = self.df[target]
             X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-            model = RandomForestRegressor()
+            model = self.model
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
-            accuracy = accuracy_score(y_test, y_pred)
-            messagebox.showinfo("Model Trained", f"Model trained successfully! Accuracy: {accuracy:.2f}")
+            r2 = r2_score(y_test, y_pred)
+            r2_percent = r2 * 100
+            messagebox.showinfo("Model Trained", f"Model trained successfully! Esitmated accuracy: {r2_percent:.2f}%")
             self.set_model(model)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to train model: {e}")
