@@ -32,16 +32,21 @@ class modelInstance:
         Raises:
             Error if dataset fails to load
         """
-        file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("Excel files", "*.xlsx;*.xls")])
-        if file_path:
+        file_paths = filedialog.askopenfilenames(filetypes=[("CSV files", "*.csv"), ("Excel files", "*.xlsx;*.xls")])
+        if file_paths:
             try:
-                if file_path.endswith('.csv'):
-                    df = pd.read_csv(file_path)
-                else:
-                    df = pd.read_excel(file_path, engine='openpyxl')
-                self.set_df(df)
+                dataframes = []
+                for path in file_paths:
+                    if path.endswith('.csv'):
+                        df = pd.read_csv(path)
+                    else:
+                        df = pd.read_excel(path, engine='openpyxl')
+                    dataframes.append(df)
+                
+                merged_df = pd.concat(dataframes, ignore_index=True)
+                self.set_df(merged_df)
                 self.data_preprocessing()
-                messagebox.showinfo("Success", "Dataset loaded successfully")
+                messagebox.showinfo("Success", "Dataset(s) loaded successfully")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load dataset: {e}")
         else:
