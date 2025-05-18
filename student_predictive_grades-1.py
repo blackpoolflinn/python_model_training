@@ -13,7 +13,7 @@ class modelInstance:
     def __init__(self):
         """Intialise Class Variables"""
         self.df = None
-        self.model = RandomForestRegressor()
+        self.model = None
         self.label_encoder = LabelEncoder()
 
     def set_df(self, df):
@@ -63,7 +63,14 @@ class modelInstance:
     def remove_empty_rows(self) -> pd.DataFrame:
         """Uses regex to convert all empty cells into NAN values and drops empty rows"""
         df = self.df.replace(r'^\s*$', np.nan, regex=True)
-        self.set_df(df.dropna(how='all'))
+
+        df = df.dropna(how='all')
+
+        # Drop rows where ≥80% of fields are missing
+        threshold = int(df.shape[1] * 0.8)
+        df = df.dropna(thresh=df.shape[1] - threshold)
+
+        self.set_df(df)
 
     
     def verify_numerical_categories(self):
@@ -133,7 +140,7 @@ class modelInstance:
             x = self.df[features]
             y = self.df[target]
             X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-            model = self.model
+            model = RandomForestRegressor()
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             r2 = r2_score(y_test, y_pred)
@@ -142,7 +149,6 @@ class modelInstance:
             self.set_model(model)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to train model: {e}")
-        return None
 
     # Please add function comment
     def make_predictions(self, features: list):
