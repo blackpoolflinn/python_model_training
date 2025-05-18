@@ -6,7 +6,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import LabelEncoder
-import subprocess
 
 class modelInstance:
 
@@ -22,7 +21,7 @@ class modelInstance:
     def set_model(self, model: RandomForestRegressor):
         self.model = model
 
-    # Please add function comment
+
     def load_dataset(self):
         """ Selects and loads a chosen data file into a df.
         
@@ -120,7 +119,7 @@ class modelInstance:
         
         self.set_df(df)
 
-    # Please add funtion comment
+
     def train_model(self, features: list, target: str):
         """ Trains model using a given dataset, features and the target variables.
         
@@ -155,7 +154,7 @@ class modelInstance:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to train model: {e}")
 
-    # Please add function comment
+
     def make_predictions(self, features: list):
         """Using the given model, uses the given data to give a target prediction.
         
@@ -194,35 +193,35 @@ def is_number(val):
 # Intialise model class
 model_instance = modelInstance()
 
-# Please add function comment
+# Intialise Tkinter element and set window title
 root = tk.Tk()
 root.title("Student Predictive Grades")
 
-# Please add function comment
+# Create a load dataset button for the tkinter window
 load_button = tk.Button(root, text="Load Dataset", command=lambda: model_instance.load_dataset())
 load_button.pack(pady=10)
 
-#Please add function comment
+# Create an input field for features to train the dataset model on
 tk.Label(root, text="Features (comma-separated):").pack()
 features_entry = tk.Entry(root)
 features_entry.pack(pady=5)
 
-# Please add function comment
+# Create a target input field for the prediction variable
 tk.Label(root, text="Target:").pack()
 target_entry = tk.Entry(root)
 target_entry.pack(pady=5)
 
-# Please add function comment
+# Creates a train button to train the model once the dataset has been selected, features entered and target variable selected
 train_button = tk.Button(root, text="Train Model", command=lambda: model_instance.train_model(features_entry.get().split(','), target_entry.get()))
 train_button.pack(pady=10)
 
-# Please add function comment
+# Creates a predict button to predict the target variable for a given dataset and group of features
 predict_button = tk.Button(root, text="Make Predictions", command=lambda: model_instance.make_predictions(features_entry.get().split(',')))
 predict_button.pack(pady=10)
 
-# Please add function comment
+# Draws the resulting predicted data to a text box
 result_text = tk.Text(root, height=20, width=80)
 result_text.pack(pady=10)
 
-# Please add function comment
+# tkinter main loop 
 root.mainloop()
