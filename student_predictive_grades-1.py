@@ -1,6 +1,5 @@
 import pandas as pd
 import tkinter as tk
-import sklearn as sk
 import numpy as np
 from tkinter import filedialog, messagebox
 from sklearn.model_selection import train_test_split
@@ -49,6 +48,7 @@ class modelInstance:
             self.set_df(None)
 
     def data_preprocessing(self) -> pd.DataFrame:
+        """Top level function for data preprocessing of the given dataset"""
         
         if self.df is None:
             messagebox.showerror("Error", "No dataset loaded.")
@@ -67,6 +67,7 @@ class modelInstance:
 
     
     def verify_numerical_categories(self):
+        """Verifies the datatype of numerical columns in the dataset"""
         df = self.df
 
         numerical_categories = ['age','study_hours_per_day','social_media_hours','netflix_hours',
@@ -91,6 +92,7 @@ class modelInstance:
 
 
     def encode_string_categories(self):
+        """Encodes string categories using label encoder to allow for them to be used in model training"""
         df = self.df
 
         categorical_cols = [
@@ -136,7 +138,7 @@ class modelInstance:
             y_pred = model.predict(X_test)
             r2 = r2_score(y_test, y_pred)
             r2_percent = r2 * 100
-            messagebox.showinfo("Model Trained", f"Model trained successfully! Esitmated accuracy: {r2_percent:.2f}%")
+            messagebox.showinfo("Model Trained", f"Model trained successfully! Estimated accuracy: {r2_percent:.2f}%")
             self.set_model(model)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to train model: {e}")
