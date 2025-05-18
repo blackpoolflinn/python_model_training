@@ -45,10 +45,18 @@ class modelInstance:
         else:
             self.set_df(None)
 
-    def clean_dataset(self):
+    def data_preprocessing(self):
         
         if self.df is None:
             messagebox.showerror("Error", "No dataset loaded.")
+
+        numerical_categories = ['age','study_hours_per_day','social_media_hours','netflix_hours',
+                                'attendance_percentage','sleep_hours','exercise_frequency',
+                                'mental_health_rating','exam_score']
+        
+        string_categories = ['student_id','gender','part_time_job','diet_quality','parental_education_level',
+                             'internet_quality','extracurricular_participation']
+        
 
     # Please add funtion comment
     def train_model(self, features: list, target: str):
@@ -72,9 +80,9 @@ class modelInstance:
             return
 
         try:
-            X = self.df[features]
+            x = self.df[features]
             y = self.df[target]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
             model = RandomForestRegressor()
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
