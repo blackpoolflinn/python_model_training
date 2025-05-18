@@ -1,6 +1,7 @@
 import pandas as pd
 import tkinter as tk
 import sklearn as sk
+import numpy as np
 from tkinter import filedialog, messagebox
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
@@ -38,24 +39,51 @@ class modelInstance:
                     df = pd.read_csv(file_path)
                 else:
                     df = pd.read_excel(file_path, engine='openpyxl')
-                messagebox.showinfo("Success", "Dataset loaded successfully *but did you check the script!")
                 self.set_df(df)
+                self.data_preprocessing()
+                messagebox.showinfo("Success", "Dataset loaded successfully")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load dataset: {e}")
         else:
             self.set_df(None)
 
-    def data_preprocessing(self):
+    def data_preprocessing(self) -> pd.DataFrame:
         
         if self.df is None:
             messagebox.showerror("Error", "No dataset loaded.")
 
-        numerical_categories = ['age','study_hours_per_day','social_media_hours','netflix_hours',
-                                'attendance_percentage','sleep_hours','exercise_frequency',
-                                'mental_health_rating','exam_score']
+        self.remove_empty_rows()
+        self.verify_numerical_categories()
         
-        string_categories = ['student_id','gender','part_time_job','diet_quality','parental_education_level',
-                             'internet_quality','extracurricular_participation']
+
+    def remove_empty_rows(self) -> pd.DataFrame:
+        """Uses regex to convert all empty cells into NAN values and drops empty rows"""
+        df = self.df.replace(r'^\s*$', np.nan, regex=True)
+        self.set_df(df.dropna(how='all'))
+
+    
+    def verify_numerical_categories(self):
+        df = self.df
+
+        numerical_categories = ['age','study_hours_per_day','social_media_hours','netflix_hours',
+                                        'attendance_percentage','sleep_hours','exercise_frequency',
+                                        'mental_health_rating','exam_score']
+
+        for column in numerical_categories:
+            # Apply mask to find numeric values
+            mask = df[column].apply(is_number)
+
+            # Convert numeric values to float
+            df.loc[mask, column] = df.loc[mask, column].astype(float)
+
+            # Calculate the median of numeric values
+            median_value = df.loc[mask, column].median()
+
+            # Replace non-numeric values with the median
+            df.loc[~mask, column] = median_value
+            df[column] = df[column].astype(float)
+
+        self.set_df(df)
         
 
     # Please add funtion comment
@@ -122,6 +150,13 @@ class modelInstance:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to make predictions: {e}")
 
+def is_number(val):
+    try:
+        float(val)
+        return True
+    except ValueError:
+        return False
+
 # Intialise model class
 model_instance = modelInstance()
 
@@ -157,4 +192,3 @@ result_text.pack(pady=10)
 
 # Please add function comment
 root.mainloop()
-
