@@ -14,6 +14,7 @@ class modelInstance:
         self.df = None
         self.model = None
         self.label_encoder = LabelEncoder()
+        self.loaded_files = []
 
     def set_df(self, df):
         self.df = df
@@ -41,10 +42,19 @@ class modelInstance:
                     else:
                         df = pd.read_excel(path, engine='openpyxl')
                     dataframes.append(df)
-                
+            
+                # Merge the files together into a df
                 merged_df = pd.concat(dataframes, ignore_index=True)
                 self.set_df(merged_df)
                 self.data_preprocessing()
+
+                self.loaded_files = file_paths  # Save file paths
+                # Show the list of filenames in the GUI
+                file_display_text.delete(1.0, tk.END)
+                file_display_text.insert(tk.END, "Loaded files:\n")
+                for path in file_paths:
+                    file_display_text.insert(tk.END, f"- {path.split('/')[-1]}\n")
+
                 messagebox.showinfo("Success", "Dataset(s) loaded successfully")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load dataset: {e}")
@@ -159,9 +169,7 @@ class modelInstance:
         """Using the given model, uses the given data to give a target prediction.
         
         Args:
-            model: sklearn model that has already been trained
-            df: pandas df containing data to provide prediction on
-            features: data tiles to be used to create the prediction
+            features: variables to be used to make predictions
             
         Returns:
             Visual output of the prediction of the target variable for the data
@@ -222,6 +230,9 @@ predict_button.pack(pady=10)
 # Draws the resulting predicted data to a text box
 result_text = tk.Text(root, height=20, width=80)
 result_text.pack(pady=10)
+
+file_display_text = tk.Text(root, height=5, width=80)
+file_display_text.pack(pady=5)
 
 # tkinter main loop 
 root.mainloop()
