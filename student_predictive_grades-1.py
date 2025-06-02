@@ -15,9 +15,13 @@ class modelInstance:
         self.model = None
         self.label_encoder = LabelEncoder()
         self.loaded_files = []
+        self.clean_df = None
 
     def set_df(self, df):
         self.df = df
+
+    def set_clean_df(self, df):
+        self.clean_df = df
 
     def set_model(self, model: RandomForestRegressor):
         self.model = model
@@ -46,7 +50,7 @@ class modelInstance:
                 # Merge the files together into a df
                 merged_df = pd.concat(dataframes, ignore_index=True)
                 self.set_df(merged_df)
-                self.data_preprocessing()
+                self.set_clean_df(None)
 
                 self.loaded_files = file_paths  # Save file paths
                 # Show the list of filenames in the GUI
@@ -61,6 +65,7 @@ class modelInstance:
         else:
             self.set_df(None)
 
+
     def data_preprocessing(self) -> pd.DataFrame:
         """Top level function for data preprocessing of the given dataset"""
         
@@ -71,7 +76,9 @@ class modelInstance:
         self.verify_numerical_categories()
         self.encode_string_categories()
 
-        self.set_df(self.df.drop('student_id', axis=1))
+        self.set_clean_df(self.df.drop('student_id', axis=1))
+
+        messagebox.showinfo("Success", "Dataset(s) cleaned")
         
 
     def remove_empty_rows(self) -> pd.DataFrame:
@@ -108,6 +115,9 @@ class modelInstance:
             # Replace non-numeric values with the median
             df.loc[~mask, column] = median_value
             df[column] = df[column].astype(float)
+
+        # Cap exam_score to a maximum of 100
+        df['exam_score'] = df['exam_score'].clip(upper=100)
 
         self.set_df(df)
 
@@ -146,13 +156,17 @@ class modelInstance:
         
         """
 
-        if self.df is None:
-            messagebox.showerror("Error", "No dataset loaded.")
+        if self.clean_df is None:
+            if self.df is None:
+                messagebox.showerror("Error", "No dataset loaded.")
+            else:
+                messagebox.showerror("Error", "Dataset not cleaned.")
             return
 
         try:
-            x = self.df[features]
-            y = self.df[target]
+            x = self.clean_df[features]
+            y = self.clean_df[target]
+
             X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
             model = RandomForestRegressor()
             model.fit(X_train, y_train)
@@ -182,12 +196,30 @@ class modelInstance:
         if self.model is None:
             messagebox.showerror("Error", "No model has been trained.")
             return
+        
+        if self.clean_df is None:
+            if self.df is None:
+                messagebox.showerror("Error", "No dataset loaded.")
+            else:
+                messagebox.showerror("Error", "Dataset not cleaned.")
+            return
+        
+        if features[0] == '':
+            messagebox.showerror("Error", "No features selected.")
+            return
 
         try:
-            X_new = self.df[features]
+            X_new = self.clean_df[features]
             predictions = self.model.predict(X_new)
             result_text.delete(1.0, tk.END)
-            result_text.insert(tk.END, f"Predictions:\n{predictions}")
+            result_text.insert(tk.END, f"Predictions:\n{np.round(predictions, 2)}")
+
+            df = pd.DataFrame({'exam_score' : np.round(predictions, 2)})
+            df.index.name = 'student_number'
+            df.to_csv('predictions.csv')
+
+            messagebox.showinfo("Success", "Predictions made, shown in display and saved to 'predictions.csv'.")
+
         except Exception as e:
             messagebox.showerror("Error", f"Failed to make predictions: {e}")
 
@@ -208,6 +240,9 @@ root.title("Student Predictive Grades")
 # Create a load dataset button for the tkinter window
 load_button = tk.Button(root, text="Load Dataset", command=lambda: model_instance.load_dataset())
 load_button.pack(pady=10)
+
+clean_button = tk.Button(root, text="Clean Dataset", command=lambda: model_instance.data_preprocessing())
+clean_button.pack(pady=5)
 
 # Create an input field for features to train the dataset model on
 tk.Label(root, text="Features (comma-separated):").pack()
