@@ -14,18 +14,19 @@ class modelInstance:
         self.df = None
         self.model = None
         self.label_encoder = LabelEncoder()
-        self.loaded_files = []
         self.clean_df = None
 
     def set_df(self, df):
+        """Df setter"""
         self.df = df
 
     def set_clean_df(self, df):
+        """Clean df setter"""
         self.clean_df = df
 
     def set_model(self, model: RandomForestRegressor):
+        """Model setter"""
         self.model = model
-
 
     def load_dataset(self):
         """ Selects and loads a chosen data file into a df.
@@ -52,7 +53,6 @@ class modelInstance:
                 self.set_df(merged_df)
                 self.set_clean_df(None)
 
-                self.loaded_files = file_paths  # Save file paths
                 # Show the list of filenames in the GUI
                 file_display_text.delete(1.0, tk.END)
                 file_display_text.insert(tk.END, "Loaded files:\n")
@@ -144,7 +144,6 @@ class modelInstance:
         """ Trains model using a given dataset, features and the target variables.
         
         Args:
-            df: df containing the data to train the model
             features: Data titles which are to be used to create the prediction
             target: The target variable in which the model has to predict
             
@@ -224,6 +223,7 @@ class modelInstance:
             messagebox.showerror("Error", f"Failed to make predictions: {e}")
 
 def is_number(val):
+    """Float type checking function"""
     try:
         float(val)
         return True
@@ -266,6 +266,7 @@ predict_button.pack(pady=10)
 result_text = tk.Text(root, height=20, width=80)
 result_text.pack(pady=10)
 
+# Draws a textbox that displays which datasets have been loaded
 file_display_text = tk.Text(root, height=5, width=80)
 file_display_text.pack(pady=5)
 
