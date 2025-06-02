@@ -4,7 +4,7 @@ import numpy as np
 from tkinter import filedialog, messagebox
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import LabelEncoder
 
 class modelInstance:
@@ -171,8 +171,17 @@ class modelInstance:
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             r2 = r2_score(y_test, y_pred)
-            r2_percent = r2 * 100
-            messagebox.showinfo("Model Trained", f"Model trained successfully! Estimated accuracy: {r2_percent:.2f}%")
+            MSE = mean_squared_error(y_test, y_pred)
+            MAE = mean_absolute_error(y_test, y_pred)
+            messagebox.showinfo("Model Trained",
+                                 f"Model trained successfully! \n\n"
+                                 f"R squared score: {r2:.2f}\n"
+                                 f"Mean squared error: {MSE:.2f}\n"
+                                 f"Mean absolute error: {MAE:.2f}")
+            metric_text.config(text=f"Model Evaluation Metrics:\n"
+                         f"R squared score: {r2:.2f}\n"
+                         f"Mean Squared Error (MSE): {MSE:.2f}\n"
+                         f"Mean Absolute Error (MAE): {MAE:.2f}")
             self.set_model(model)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to train model: {e}")
@@ -257,6 +266,10 @@ target_entry.pack(pady=5)
 # Creates a train button to train the model once the dataset has been selected, features entered and target variable selected
 train_button = tk.Button(root, text="Train Model", command=lambda: model_instance.train_model(features_entry.get().split(','), target_entry.get()))
 train_button.pack(pady=10)
+
+# Draws a textbox that displays the metrics for the model
+metric_text = tk.Label(root, text="Model Evaluation Metrics:\n", justify='left', anchor='w', bg='lightgrey', width=40, height=4, relief='raised')
+metric_text.pack(pady=5)
 
 # Creates a predict button to predict the target variable for a given dataset and group of features
 predict_button = tk.Button(root, text="Make Predictions", command=lambda: model_instance.make_predictions(features_entry.get().split(',')))
