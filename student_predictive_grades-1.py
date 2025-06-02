@@ -268,7 +268,7 @@ train_button = tk.Button(root, text="Train Model", command=lambda: model_instanc
 train_button.pack(pady=10)
 
 # Draws a textbox that displays the metrics for the model
-metric_text = tk.Label(root, text="Model Evaluation Metrics:\n", justify='left', anchor='w', bg='lightgrey', width=40, height=4, relief='raised')
+metric_text = tk.Label(root, text="Model Evaluation Metrics:\n", justify='left', anchor='w', bg='lightgrey', width=40, height=4, relief='groove')
 metric_text.pack(pady=5)
 
 # Creates a predict button to predict the target variable for a given dataset and group of features
